@@ -75,7 +75,11 @@ Développeur / Jenkins
 Hosted  Proxy  Group
         |
         v
+<<<<<<< HEAD
  Maven Central# 4. Installation de Nexus
+=======
+ Maven Central
+>>>>>>> 77a9335 (Ajout LAB Nexus avec images)
 ```
 
 # 5. Installation de Nexus
@@ -120,6 +124,15 @@ Ce repository permet de stocker les artefacts generes par nos applications.
 
 ## 8.3 Upload dans Nexus
 
+<<<<<<< HEAD
+=======
+Nous avons uploade le fichier demo-app.jar dans le repository maven-hosted en utilisant l’interface Nexus :
+
+- selection du fichier
+- ajout des coordonnées Maven (groupId, artifactId, version)
+- validation de l’upload
+
+>>>>>>> 77a9335 (Ajout LAB Nexus avec images)
 # 9. Résultat
 
 Le fichier 'demo-app.jar' a été stocké avec succes dans le repository 'maven-hosted'.
