@@ -75,40 +75,36 @@ Développeur / Jenkins
 Hosted  Proxy  Group
         |
         v
-<<<<<<< HEAD
- Maven Central# 4. Installation de Nexus
-=======
  Maven Central
->>>>>>> 77a9335 (Ajout LAB Nexus avec images)
 ```
 
 # 5. Installation de Nexus
 
 ## 5.1 Installation Docker
 
-![Docker](images/docker.png)
+![Docker](images/nexus/docker.png)
 
 ## 5.2 Lancer Nexus
 
-![Lance Nexus](images/lance.png)
+![Lance Nexus](images/nexus/lance.png)
 
 ## 5.3 Acces à Nexus
 
-![Page d'accueil Nexus](images/acceuil.png)
+![Page d'accueil Nexus](images/nexus/acceuil.png)
 
 ## 5.4 Recuperation du mot de passe admin
 
-![Recuperation du mot de passe admin](images/pwd.png)
+![Recuperation du mot de passe admin](images/nexus/pwd.png)
 
 # 6. Repositories existants
 
-![Repositories existants](images/repo.png)
+![Repositories existants](images/nexus/repo.png)
 
 # 7. Creation d’un repository Hosted
 
 Nous avons cree un repository Maven Hosted nomme :
 
-![Creation d’un repository Hosted](images/hosted.png)
+![Creation d’un repository Hosted](images/nexus/hosted.png)
 
 Ce repository permet de stocker les artefacts generes par nos applications.
 
@@ -116,23 +112,20 @@ Ce repository permet de stocker les artefacts generes par nos applications.
 
 ## 8.1 Creation d’une application Java simple
 
-![Fichier Test.java](images/test.png)
+![Fichier Test.java](images/nexus/test.png)
 
 ## 8.2 Compilation et generation du fichier JAR
 
-![Compilation et generation du fichier JAR](images/jar.png)
+![Compilation et generation du fichier JAR](images/nexus/jar.png)
 
 ## 8.3 Upload dans Nexus
 
-<<<<<<< HEAD
-=======
 Nous avons uploade le fichier demo-app.jar dans le repository maven-hosted en utilisant l’interface Nexus :
 
-- selection du fichier
-- ajout des coordonnées Maven (groupId, artifactId, version)
-- validation de l’upload
+	- selection du fichier
+	- ajout des coordonnées Maven (groupId, artifactId, version)
+	- validation de l’upload
 
->>>>>>> 77a9335 (Ajout LAB Nexus avec images)
 # 9. Résultat
 
 Le fichier 'demo-app.jar' a été stocké avec succes dans le repository 'maven-hosted'.
