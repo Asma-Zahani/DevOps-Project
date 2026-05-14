@@ -82,7 +82,7 @@ Hosted  Proxy  Group
 
 ## 5.1 Installation Docker
 
-![Docker](images/nexus/docker.png)
+![Version Docker deja installé ](images/nexus/docker.png)
 
 ## 5.2 Lancer Nexus
 
