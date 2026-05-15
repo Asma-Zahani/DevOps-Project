@@ -2,25 +2,25 @@
 
 # 1. Introduction
 
-Dans ce laboratoire, nous avons etudie Nexus Repository Manager.
+Dans ce laboratoire, nous avons étudié Nexus Repository Manager.
 
-Nexus est un gestionnaire de depots d'artefacts , il sert a stocker , organiser et distribuer les fichiers.
+Nexus est un gestionnaire de dépots d'artefacts , il sert a stocker , organiser et distribuer les fichiers.
 
 ---
 
 # 2. Besoin metier
 
-Dans une entreprise, les developpeurs utilisent plusieurs dependances et generent plusieurs versions d’applications.
+Dans une entreprise, les développeurs utilisent plusieurs dépendances et génèrent plusieurs versions d’applications.
 
 Sans Nexus :
-	-chaque devellopeur telecharge depuis Internet.
-	-Jenkins telecharge aussi.
-	-Docker telecharge aussi.
+	- chaque dévellopeur télécharge depuis Internet.
+	- Jenkins télécharge aussi.
+	- Docker télécharge aussi.
 
 Avec Nexus :
-	-Nous telechargent une seule fois.
-	-il garde une copie locale
-	-tous les devellopeurs utilisent cette copie 
+	- Nous téléchargent une seule fois.
+	- il garde une copie locale
+	- tous les dévellopeurs utilisent cette copie 
 
 ---
 
@@ -28,35 +28,35 @@ Avec Nexus :
 
 ## 3.1 Artefact
 
-Un artefact est un fichier genere apres la compilation d'une application.
+Un artefact est un fichier généré apres la compilation d'une application.
 
 Exemples :
-	-fichier .jar .war
-	-image Docker
+	- fichier .jar .war
+	- image Docker
 
 ---
 
 ## 3.2 Repository Hosted 
 
-Le Repository hosted est un repo local cree dans nexus. 
-il sert a stocker:
-	-les applications de l'entreprise.
-	-builds Jenkins.
-	-librairie internes.
-	-image docker privees.
+Le Repository hosted est un repo local créé dans nexus. 
+il sert à stocker:
+	- les applications de l'entreprise.
+	- builds Jenkins.
+	- librairie internes.
+	- image docker privees.
 
 ---
 
 ## 3.3 Repository Proxy
 
-Le repository proxy sert de cache et intermediaire vers internet.
+Le repository proxy sert de cache et intermédiaire vers internet.
 
 Maven -> Nexus Proxy -> Internet
 
-Quand une dependance demande :
-	-Nexus verifie localement 
-	-sinon telecharge depuis internet
-	-garde une copie cache 
+Quand une dépendance demande :
+	- Nexus vérifie localement 
+	- sinon télécharge depuis internet
+	- garde une copie cache 
 
 ## 3.4 Repository Group
 
@@ -88,35 +88,35 @@ Hosted  Proxy  Group
 
 ![Lance Nexus](images/nexus/lance.png)
 
-## 5.3 Acces à Nexus
+## 5.3 Accés à Nexus
 
 ![Page d'accueil Nexus](images/nexus/acceuil.png)
 
-## 5.4 Recuperation du mot de passe admin
+## 5.4 Récuperation du mot de passe admin
 
-![Recuperation du mot de passe admin](images/nexus/pwd.png)
+![Récuperation du mot de passe admin](images/nexus/pwd.png)
 
 # 6. Repositories existants
 
 ![Repositories existants](images/nexus/repo.png)
 
-# 7. Creation d’un repository Hosted
+# 7. Création d’un repository Hosted
 
-Nous avons cree un repository Maven Hosted nomme :
+Nous avons créé un repository Maven Hosted nomme :
 
-![Creation d’un repository Hosted](images/nexus/hosted.png)
+![Création d’un repository Hosted](images/nexus/hosted.png)
 
-Ce repository permet de stocker les artefacts generes par nos applications.
+Ce repository permet de stocker les artefacts générés par nos applications.
 
 # 8. Test d’upload d’un artefact
 
-## 8.1 Creation d’une application Java simple
+## 8.1 Création d’une application Java simple
 
 ![Fichier Test.java](images/nexus/test.png)
 
-## 8.2 Compilation et generation du fichier JAR
+## 8.2 Compilation et génération du fichier JAR
 
-![Compilation et generation du fichier JAR](images/nexus/jar.png)
+![Compilation et génération du fichier JAR](images/nexus/jar.png)
 
 ## 8.3 Upload dans Nexus
 
