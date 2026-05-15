@@ -8,42 +8,44 @@
 
 ## Objectif du lab
 
-Mettre en évidence les capacités de SonarQube à détecter automatiquement les bugs, vulnérabilités et code smells dans une application Java Maven.
+Le but de ce labo est de découvrir comment SonarQube peut nous aider à détecter automatiquement les bugs, les vulnérabilités et les “code smells” dans une application Java utilisant Maven.
+
+Nous allons créer un petit projet de test avec des erreurs intentionnelles pour voir comment SonarQube les détecte et les remonte.
 
 ---
 
-## 1. Le Besoin – Pourquoi analyser le code ?
+## 1. Pourquoi analyser le code ?
 
-Dans un projet logiciel, le code peut contenir :
+Dans un projet logiciel, certains problèmes ne sont pas visibles immédiatement :
 
-- des **bugs** qui font arrêter l’application,
-- des **failles de sécurité** exploitables par des attaquants,
-- de la **dette technique** (code difficile à comprendre ou modifier),
-- du **code dupliqué** qui complique les évolutions.
+- des **bugs** pouvant faire planter l’application ;
+- des **failles de sécurité** que des attaquants pourraient exploiter ;
+- de la **dette technique**, c’est-à-dire du code compliqué à comprendre ou modifier ;
+- du **code dupliqué**, rendant la maintenance plus difficile.
 
-Sans outil d’analyse, ces problèmes sont souvent découverts trop tard, après la mise en production, où les corrections coûtent plus cher.
+Sans outil d’analyse, on découvre souvent ces problèmes trop tard, après la mise en production, ce qui rend les corrections coûteuses.
 
-**SonarQube** est la solution : il analyse le code source de façon **statique** (sans l'exécuter) et remonte tous les problèmes automatiquement dans un dashboard centralisé.
+**SonarQube** nous aide à détecter ces problèmes avant qu’ils ne deviennent critiques, grâce à une analyse **statique** du code et un tableau de bord centralisé.
 
-### Bénéfices concrets
+### Ce que ça change concrètement
 
-| Problème sans SonarQube         | Solution avec SonarQube              |
-|----------------------------------|--------------------------------------|
-| Bugs découverts en production    | Détectés dès le commit               |
-| Failles de sécurité non vues     | Identifiées et classées par gravité  |
-| Code difficile à maintenir       | Mesuré via la dette technique        |
-| Pas de standard de qualité       | Enforced via les Quality Gates       |
+| Avant SonarQube                  | Avec SonarQube                  |
+|---------------------------------|--------------------------------|
+| Bugs détectés en production      | Détectés dès le commit          |
+| Failles de sécurité ignorées     | Identifiées et classées par gravité |
+| Code difficile à maintenir       | Dette technique mesurée         |
+| Pas de standard de qualité       | Quality Gates appliqués         |
 
 ---
 
-## 2. Les Concepts Clés
+## 2. Concepts de base
 
 ### 2.1 Quality Gate
 
-Un **Quality Gate** est un ensemble de règles qui décide si le projet respecte le niveau de qualité attendu.
+Un **Quality Gate** est un ensemble de règles qui décide si le projet est assez “propre” pour être déployé.  
 
-- **PASS** → le code peut être déployé
-- **FAIL** → le pipeline est bloqué
+- **PASS** → le code peut continuer dans le pipeline.  
+- **FAIL** → le pipeline est bloqué.
 
 Exemple de règles :
 
@@ -56,31 +58,31 @@ Exemple de règles :
 
 ### 2.2 Clean as You Code
 
-Concept recommandé par SonarSource : on contrôle **uniquement le nouveau code** plutôt que tout le projet.
+SonarSource recommande de contrôler **seulement le nouveau code**, plutôt que de tout analyser à chaque fois.  
 
-**Pourquoi ?** Un vieux projet peut déjà avoir de la dette technique accumulée. L'objectif est de ne pas aggraver la situation et de garder le nouveau code propre dès le départ.
+Ça permet de ne pas se focaliser sur la vieille dette technique déjà existante et de garder le nouveau code propre dès le départ.
 
 ### 2.3 Les Scanners
 
-Un **Scanner** est l'outil qui lit le code source et envoie les résultats au serveur SonarQube.
+Un **Scanner** lit le code source et envoie les résultats au serveur SonarQube.
 
-| Scanner                  | Utilisation                        |
+| Scanner                  | Quand l’utiliser                   |
 |--------------------------|------------------------------------|
 | `sonar-maven-plugin`     | Projets Java/Maven                 |
 | `sonar-scanner` CLI      | Tout type de projet                |
 | SonarScanner for Gradle  | Projets Gradle                     |
-| SonarScanner for Jenkins | Intégration CI/CD (Semaine 2)      |
+| SonarScanner for Jenkins | Intégration CI/CD                  |
 
 ### 2.4 Types de problèmes détectés
 
 | Type                 | Description                               | Exemple                              |
 |----------------------|-------------------------------------------|--------------------------------------|
-| **Bug**              | Erreur logique pouvant causer un crash    | `NullPointerException`, `==` sur String |
-| **Vulnerability**    | Faille de sécurité exploitable            | SQL Injection, mot de passe hardcodé |
+| **Bug**              | Erreur logique pouvant causer un crash    | `NullPointerException`               |
+| **Vulnerability**    | Faille de sécurité exploitable            | SQL Injection                        |
 | **Code Smell**       | Mauvaise pratique nuisant à la lisibilité | Variable inutilisée, catch vide      |
-| **Security Hotspot** | Code à risque nécessitant une revue       | Usage de `Random` pour crypto        |
+| **Security Hotspot** | Code à risque nécessitant une revue       | Mot de passe hardcodé                |
 
-### 2.5 Architecture de fonctionnement
+### 2.5 Comment ça fonctionne ? 
 
 ```
 Code Source (Java/Maven)
@@ -107,11 +109,13 @@ Dashboard Web → résultats visibles
 
 ### 3.1 Prérequis
 
-- Docker installé et démarré
-- Java JDK 11+
-- Maven installé
+Avant de commencer, assurez-vous d’avoir installé :
 
-Vérifications :
+- Docker
+- Java JDK 11 ou +
+- Maven
+
+Vérifiez avec :
 
 ```bash
 docker --version
@@ -119,42 +123,50 @@ java -version
 mvn -version
 ```
 
-### 3.2 Lancement de SonarQube via Docker
+### 3.2 Lancer SonarQube avec Docker
+
+Nous allons démarrer SonarQube dans un conteneur Docker. Pour ne pas perdre nos données (projets, analyses, Quality Gates…), nous créons d’abord un volume Docker persistant :
+
+```bash
+docker volume create sonarqube_data
+```
+
+Puis, on lance SonarQube :
 
 ```bash
 docker run -d \
   --name sonarqube \
   -p 9000:9000 \
+  -v sonarqube_data:/opt/sonarqube/data \
   sonarqube:lts
 ```
 
-Vérifier que le conteneur tourne :
+Vérifiez que le conteneur tourne :
 
 ```bash
 docker ps
 ```
 
-Attendre environ 1 minute que SonarQube démarre, puis accéder à :
+Le serveur SonarQube peut prendre environ 1 minute pour démarrer complètement. Ensuite, accédez à :
 
 ```
 http://localhost:9000
 ```
 
-Login par défaut : `admin / admin` → changer le mot de passe au premier login.
+- **Login par défaut** : `admin / admin`
+- **Important** : changez le mot de passe dès le premier login pour sécuriser votre instance.
 
 <p align="center">
   <img src="images/sonarqube/dashboard.png" alt="Dashboard SonarQube accessible" width="800"/>
 </p>
 
-### 3.3 Création du projet et du Token
+### 3.3 Créer le projet et le token
 
-1. **Projects → Create Project → Manually**
-2. **Project Key** : `my-app` | **Display Name** : `my-app`
+1. Aller dans **Projects → Create Project → Manually**
+2. Choisir **Project Key** : `my-app` et **Display Name** : `my-app`
 3. Cliquer sur **Set Up → Locally**
-4. **Generate a token** → nommer : `my-app-token`
-5. Copier et sauvegarder le token généré
-
-> Le token ne s'affiche qu'une seule fois — le sauvegarder immédiatement.
+4. Générer un token d’accès → nommer : `my-app-token`
+5. Copier et sauvegarder ce token, il ne s’affiche qu’une seule fois !
 
 <p align="center">
   <img src="images/sonarqube/token-generation.png" alt="Token généré dans SonarQube" width="700"/>
@@ -162,20 +174,21 @@ Login par défaut : `admin / admin` → changer le mot de passe au premier login
 
 ---
 
-## 4. Analyse d'une Application Java avec Maven
+## 4. Analyse d'un petit projet Java
 
-### 4.1 Structure du projet de test
+### 4.1 Structure
+
+Nous allons créer un projet simple pour tester SonarQube :
 
 ```
 my-app/
  ├── pom.xml
- └── src/
-     └── main/
-         └── java/
-             └── App.java
+ └── src/main/java/App.java
 ```
 
-### 4.2 Code Java de test (bugs intentionnels)
+### 4.2 Code de test (avec erreurs volontairement)
+
+Le fichier `App.java` contient volontairement plusieurs erreurs et mauvaises pratiques pour observer ce que SonarQube détecte :
 
 ```java
 import java.util.Scanner;
@@ -223,12 +236,13 @@ public class App {
 }
 ```
 
-### 4.3 Configuration du pom.xml
+### 4.3 Configuration Maven
+
+Pour analyser notre projet avec SonarQube, nous utilisons le plugin Maven suivant dans pom.xml :
 
 ```xml
 <project>
     <modelVersion>4.0.0</modelVersion>
-
     <groupId>com.example</groupId>
     <artifactId>my-app</artifactId>
     <version>1.0-SNAPSHOT</version>
@@ -236,16 +250,6 @@ public class App {
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
-                <configuration>
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
-                </configuration>
-            </plugin>
-
             <plugin>
                 <groupId>org.sonarsource.scanner.maven</groupId>
                 <artifactId>sonar-maven-plugin</artifactId>
@@ -257,7 +261,9 @@ public class App {
 </project>
 ```
 
-### 4.4 Lancement de l'analyse
+### 4.4 Lancer l'analyse
+
+Pour analyser le projet et envoyer les résultats à SonarQube, nous exécutons :
 
 ```bash
 mvn clean verify sonar:sonar \
@@ -273,51 +279,45 @@ mvn clean verify sonar:sonar \
 | `sonar:sonar`          | Lance l'analyse et envoie les résultats        |
 | `-Dsonar.projectKey`   | Identifiant du projet dans SonarQube           |
 | `-Dsonar.host.url`     | URL du serveur SonarQube                       |
-| `-Dsonar.login`        | Token d'authentification généré à l'étape 3.3 |
+| `-Dsonar.login`        | Token d'authentification généré à l'étape 3.3  |
 
 ---
 
 ## 5. Test et Validation
 
-### 5.1 Résultats attendus dans SonarQube
+### 5.1 Résultats
 
-| Type          | Problème détecté                                   |
-|---------------|----------------------------------------------------|
-| Bug           | Comparaison `==` sur String (`username == "admin"`)|
-| Bug           | `NullPointerException` sur `password.length()`     |
-| Security Hotspot | Mot de passe hardcodé (`password2 = "admin123"`)   |
-| Code Smell    | Variable `unusedVariable` inutilisée               |
-| Code Smell    | Bloc `catch` vide ou sans traitement réel          |
-| Code Smell    | `Scanner` jamais fermé                             |
-| Code Smell    | Duplication de code (`if (username == "admin")`)   |
+Après l’analyse, SonarQube remonte différents problèmes détectés dans notre code :
+
+- Comparaison `==` sur String → Bug
+- `NullPointerException` sur `password.length()`  → Bug
+- Mot de passe hardcodé (`password2 = "admin123"`) → Security Hotspot
+- Variable `unusedVariable` inutilisée  → Code Smell
+- Bloc `catch` vide → Code Smell
+- `Scanner` jamais fermé → Code Smell
+- Duplication de code (`if (username == "admin")`) → Code Smell
 
 → **Quality Gate : FAIL**
 
 <p align="center">
-  <img src="images/sonarqube/analysis-results.png" alt="Résultats SonarQube" width="700"/>
+  <img src="images/sonarqube/analysis-results.png" alt="Résultats SonarQube" width="500"/>
 </p>
 
 <p align="center">
-  <img src="images/sonarqube/quality-gate-fail.png" alt="Quality Gate FAIL" width="300"/>
+  <img src="images/sonarqube/quality-gate-fail.png" alt="Quality Gate FAIL" width="700"/>
 </p>
 
 ### 5.2 Vérification dans le dashboard
 
+Pour explorer les résultats :
+
 1. Aller sur `http://localhost:9000`
-2. **Projects → my-app**
-3. Vérifier le statut du Quality Gate, le nombre de Bugs/Vulnerabilities/Code Smells, et le détail par fichier et par ligne.
+2. Cliquer sur **Projects → my-app**
+3. Observer :
+    - Statut du **Quality Gate**
+    - Nombre de **Bugs, Vulnerabilities, Code Smells**
+    - Détail par fichier et par ligne de code
 
----
-
-## 6. Résumé
-
-| Élément         | Détail                                          |
-|-----------------|-------------------------------------------------|
-| Outil           | SonarQube LTS Community Edition                 |
-| Installation    | Docker `sonarqube:lts` sur port 9000            |
-| Scanner utilisé | `sonar-maven-plugin` 4.0.0.2929                 |
-| Projet de test  | Application Java avec bugs intentionnels        |
-| Quality Gate    | FAIL (Bugs + Vulnerabilities + Code Smells)     |
-| Prochaine étape | Intégration Jenkins ↔ SonarQube (Semaine 2)     |
+> Le dashboard permet de naviguer directement vers les lignes problématiques et de comprendre exactement ce qui doit être corrigé.
 
 ---
