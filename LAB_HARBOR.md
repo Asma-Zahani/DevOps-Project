@@ -105,17 +105,13 @@ donc d'apres github j'ai installer Harbor:
 ```bash
 wget https://github.com/goharbor/harbor/releases/download/v2.14.4/harbor-online-installer-v2.14.4.tgz
 ```
-<p align="center">
 ![Docker installe + Harbor](images/docker-installe-harbor-git.png)
-</p>
 extraction :
 
 ```bash
 tar xvf harbor-online-installer-v2.14.4.tgz
 ```
-<p align="center">
 ![Extract harbor](images/extract-Harbor.png)
-</p>
 ---
 
 ## 3.3 Configuration Harbor
@@ -145,12 +141,8 @@ http:
   port: 8088 (car quand j'ai essayer d'utiliser le port 80 il est utilisé par
               jenkins donc j'ai modifié le port)
 ```
-<p align="center">
 ![configuration 1](images/config-Harbor1.png)
-</P>
-<p align="center">
 ![Extract harbor1](images/config-Harbor2.png)
-</p>
 
 dans harbor.yml j'ai décommenté la partie de https, car lors de poursuivre la 
 documentation d'instalatio harbor il m'a donné une etape d'utiliser HTTPS 
@@ -164,9 +156,7 @@ je vais utiliser HTTP pour simplifier les choses.
 ```bash
 sudo ./install.sh
 ```
-<p align="center">
 ![Instalation Harbor](images/instalation-harbor.png)
-</p>
 
 verification des conteneurs :
 
@@ -182,9 +172,7 @@ dans `/etc/docker/daemon.json` :
 ```json
 { "insecure-registries" : ["10.0.2.15:8088"]}
 ```
-<p align="center">
 ![Insecure registry](images/insecure-registry.png)
-</p>
 
 donc apres ca j'ai redemarer docker
 
@@ -196,9 +184,7 @@ http://10.0.2.15:8088
 ```
 
 ### Interface Harbor
-<p align="center">
 ![Interface Harbor](images/dashboard-harbor-apres-instalation.png)
-</p>
 ---
 
 # 4. Création d’un Projet Harbor
@@ -222,9 +208,7 @@ Private
 ```
 
 ### Projet Harbor créé
-<p align="center">
 ![Projet Harbor](images/cree-projet-harbor.png)
-</p>
 ---
 
 # 5. Création et Push d’une Image Docker
@@ -257,12 +241,8 @@ docker build -t myapp:v1 .
 ```
 
 ### Build image Docker
-<p align="center">
 ![Docker Build](images/creation-app-simple-build.png)
-</p>
-<p align="center">
 ![Application tournée](images/app.png)
-</p>
 ---
 
 ## 5.4 Login Harbor
@@ -278,9 +258,7 @@ docker login 10.0.2.15:8088
 ```bash
 docker tag myapp:v1 10.0.2.15:8088/dev-project/myapp:v1
 ```
-<p align="center">
 ![Login + tag](images/login-tag-image.png)
-</p>
 ---
 
 ## 5.6 Push de l’image vers Harbor
@@ -296,13 +274,9 @@ Projects → dev-project → Repositories
 ```
 
 ### Push image vers Harbor
-<p align="center">
 ![Docker Push](images/push_image-harbor.png)
-</p>
 ### Harbor Repository
-<p align="center">
 ![Harbor Repository](images/push-dash-harbor.png)
-</p>
 ---
 
 ## 5.7 Supprimer l’image de chez moi
@@ -323,9 +297,7 @@ docker pull 10.0.2.15:8088/dev-project/myapp:v1
 
 ### Pull image depuis Harbor
 
-<p align="center">
 ![Docker Pull](images/supp-pull-image.png)
-</p>
 ---
 
 # 6. Captures d’écran
