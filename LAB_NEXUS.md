@@ -13,11 +13,13 @@ Nexus est un gestionnaire de dépots d'artefacts , il sert a stocker , organiser
 Dans une entreprise, les développeurs utilisent plusieurs dépendances et génèrent plusieurs versions d’applications.
 
 Sans Nexus :
+
 	- chaque dévellopeur télécharge depuis Internet.
 	- Jenkins télécharge aussi.
 	- Docker télécharge aussi.
 
 Avec Nexus :
+
 	- Nous téléchargent une seule fois.
 	- il garde une copie locale
 	- tous les dévellopeurs utilisent cette copie 
@@ -31,6 +33,7 @@ Avec Nexus :
 Un artefact est un fichier généré apres la compilation d'une application.
 
 Exemples :
+
 	- fichier .jar .war
 	- image Docker
 
@@ -40,6 +43,7 @@ Exemples :
 
 Le Repository hosted est un repo local créé dans nexus. 
 il sert à stocker:
+
 	- les applications de l'entreprise.
 	- builds Jenkins.
 	- librairie internes.
@@ -54,6 +58,7 @@ Le repository proxy sert de cache et intermédiaire vers internet.
 Maven -> Nexus Proxy -> Internet
 
 Quand une dépendance demande :
+
 	- Nexus vérifie localement 
 	- sinon télécharge depuis internet
 	- garde une copie cache 
@@ -133,6 +138,7 @@ Le fichier 'demo-app.jar' a été stocké avec succes dans le repository 'maven-
 # 10. Conclusion
 
 Ce laboratoire nous a permis de :
+
 	- comprendre le rôle de Nexus
 	- comprendre les différents types de repositories
 	- installer Nexus avec Docker
