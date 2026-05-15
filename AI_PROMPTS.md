@@ -32,8 +32,6 @@ L'IA est autorisée pour :
 
 ---
 
-> Les liens ci-dessus permettent de consulter l'intégralité des échanges avec l'IA. Le contenu a été relu, testé et personnalisé par chaque étudiant avant intégration dans les LABs.
-https://chatgpt.com/share/6a063f0b-c958-83ea-ac68-c776f075d87f
 
 
 
