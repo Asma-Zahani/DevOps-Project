@@ -24,4 +24,12 @@ L'IA est autorisée pour :
 
 ---
 
+### Étudiant B – Expert Nexus
+
+| Sujet | Lien |
+|-------|------|
+| Installation de Nexus, Artefacts , Repository | [Voir la conversation](https://chatgpt.com/c/6a059aa5-e1f8-83ea-86c3-e0814f7dbeb2) |
+
+---
+
 > Les liens ci-dessus permettent de consulter l'intégralité des échanges avec l'IA. Le contenu a été relu, testé et personnalisé par chaque étudiant avant intégration dans les LABs.
