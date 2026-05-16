@@ -109,7 +109,7 @@ Dashboard Web → résultats visibles
 
 ### 3.1 Prérequis
 
-Avant de commencer, assurez-vous d’avoir installé :
+Avant de commencer, les prérequis suivants doivent être installés :
 
 - Docker
 - Java JDK 11 ou +
