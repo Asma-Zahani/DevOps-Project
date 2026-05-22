@@ -1,0 +1,49 @@
+pipeline {
+  agent any
+  tools {
+    maven 'M3'
+  }
+  environment {
+    HARBOR_HOST = '@IP:8082'
+  }
+  stages {
+    stage('Build') {
+      steps {
+        echo 'Building with Maven'
+        sh 'mvn clean package -DskipTests'
+      }
+    }
+    stage('SonarQube Analysis') {
+      steps {
+        echo 'Running SonarQube analysis'
+        withSonarQubeEnv('SonarQube') {
+          sh 'mvn sonar:sonar -DskipTests'
+        }
+      }
+    }
+    stage('Deploy Nexus') {
+      steps {
+        echo 'Deploying to Nexus snapshots'
+        sh 'mvn deploy -DskipTests'
+      }
+    }
+    stage('Docker Build') {
+      steps {
+        echo 'Building Docker image'
+        sh 'docker build -t reservia-app:v1 app'
+      }
+    }
+    stage('Push Harbor') {
+      steps {
+        echo 'Tag and push to Harbor (replace @IP with your host IP)'
+        sh 'docker tag reservia-app:v1 ${HARBOR_HOST}/reservia/reservia-app:v1'
+        sh 'docker push ${HARBOR_HOST}/reservia/reservia-app:v1'
+      }
+    }
+  }
+  post {
+    always {
+      echo 'Pipeline finished'
+    }
+  }
+}

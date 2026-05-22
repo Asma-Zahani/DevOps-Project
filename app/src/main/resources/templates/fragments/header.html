@@ -1,0 +1,140 @@
+<div th:fragment="header" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <div class="header__top">
+        <div class="container">
+            <div class="row justify-content-between">
+                <div class="col-lg-6 col-md-6">
+                    <div class="social__links">
+                        <a class="link__item gap-10" href="tel:#"><i class="flaticon-phone-flip"></i><span th:text="${settings.phone}"></span></a>
+                        <a class="link__item gap-10" href="mailto:#"><i class="flaticon-envelope"></i><span th:text="${settings.email}"></span></a>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6">
+                    <div class="location">
+                        <a class="link__item gap-10" href="#"><i class="flaticon-marker"></i><span th:text="${settings.address}"></span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <header class="main__header header__function">
+        <div class="container">
+            <div class="row">
+                <div class="main__header__wrapper">
+                    <div class="main__nav">
+                        <div class="navigation d-none d-lg-block">
+                            <nav class="navigation__menu" id="main__menu">
+                                <ul class="list-unstyled">
+                                    <li class="navigation__menu--item">
+                                        <a th:href="@{/}" class="navigation__menu--item__link">Home</a>
+                                    </li>
+
+                                    <li class="navigation__menu--item">
+                                        <a th:href="@{/about}" class="navigation__menu--item__link">About Us</a>
+                                    </li>
+
+                                    <li class="navigation__menu--item">
+                                        <a th:href="@{/service}" class="navigation__menu--item__link">Service</a>
+                                    </li>
+
+                                    <li class="navigation__menu--item">
+                                        <a th:href="@{/contact}" class="navigation__menu--item__link">Contact Us</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+
+                    </div>
+                    <div class="main__logo">
+                        <a th:href="@{/}" ><img class="logo__class" th:src="@{/images/logo/logo.svg}" alt="reservia"></a>
+                    </div>
+                    <div class="main__right">
+                        <div sec:authorize="hasRole('USER')">
+                            <a th:href="@{/account}" class="theme-btn btn-style sm-btn border d-none d-lg-block">
+                                <span>My Account</span>
+                            </a>
+                        </div>
+
+                        <div sec:authorize="hasRole('ADMIN')" >
+                            <a th:href="@{/admin/dashboard}" class="theme-btn btn-style sm-btn border d-none d-lg-block">
+                                <span>Dashboard</span>
+                            </a>
+                        </div>
+
+                        <div sec:authorize="isAnonymous()">
+                            <a href="#" class="theme-btn btn-style sm-btn border d-none d-lg-block"
+                               aria-label="Login Button"
+                               data-bs-toggle="modal" data-bs-target="#loginModal" data-bs-dismiss="modal">
+                                <span>Sign In</span>
+                            </a>
+                        </div>
+                        <a th:href="@{/rooms}" class="theme-btn btn-style sm-btn fill"><span>Book Now</span></a>
+                        <button class="theme-btn btn-style sm-btn fill menu__btn d-lg-none" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
+                            <span><img th:src="@{/images/icon/menu-icon.svg}" alt=""></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="offcanvas offcanvas-start" id="offcanvasRight">
+        <div class="rts__btstrp__offcanvase">
+            <div class="offcanvase__wrapper">
+                <div class="left__side mobile__menu">
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    <div class="offcanvase__top">
+                        <div class="offcanvase__logo">
+                            <a th:href="@{/}">
+                                <img th:src="@{/images/logo/logo__two.svg}" alt="logo">
+                            </a>
+                        </div>
+                        <p class="description">
+                            Welcome to Reservia, where luxury meets comfort in the heart of canada. Since 1999, we have been dedicated to providing.
+                        </p>
+                    </div>
+                    <div class="offcanvase__mobile__menu">
+                        <div class="mobile__menu__active"></div>
+                    </div>
+                    <div class="offcanvase__bottom">
+                        <div class="offcanvase__address">
+
+                            <div class="item">
+                                <span class="h6">Phone</span>
+                                <a href="tel:#"><i class="flaticon-phone-flip"></i><span th:text="${settings.phone}"></a>
+                            </div>
+                            <div class="item">
+                                <span class="h6">Email</span>
+                                <a href="#"><i class="flaticon-envelope"></i><span th:text="${settings.email}"></a>
+                            </div>
+                            <div class="item">
+                                <span class="h6">Address</span>
+                                <a href="#"><i class="flaticon-marker"></i><span th:text="${settings.address}"></a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="right__side desktop__menu">
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    <div class="rts__desktop__menu">
+                        <nav class="desktop__menu offcanvas__menu">
+                            <ul class="list-unstyled">
+                                <li class="slide">
+                                    <a class="slide__menu__item" th:href="@{/}">Home</a>
+                                </li>
+                                <li class="slide">
+                                    <a class="slide__menu__item" th:href="@{/contact}">About Us</a>
+                                </li>
+                                <li class="slide">
+                                    <a class="slide__menu__item" th:href="@{/service}">Service</a>
+                                </li>
+                                <li class="slide has__children">
+                                    <a class="slide__menu__item" th:href="@{/contact}">Contact Us</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

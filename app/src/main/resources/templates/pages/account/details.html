@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/account_layout :: account_layout}">
+
+<div th:fragment="content_account">
+    <div class="account-form">
+
+        <h4>Account Details</h4>
+        <p class="form-subtitle">Update your personal information below.</p>
+
+        <form th:action="@{/account/update}" method="post">
+
+            <!-- Name -->
+            <div class="custom-field">
+                <i class="fa fa-user"></i>
+                <input type="text"  name="nom" placeholder="Your Name" required th:value="${user.name}">
+            </div>
+
+            <!-- Email -->
+            <div class="custom-field">
+            <i class="fa fa-envelope"></i>
+            <input type="email" id="email" name="email"
+                th:value="${user.email}" required>
+            </div>
+
+            <div id="emailWarning" class="alert-warning-custom" style="display:none;">
+                ⚠️ Modifier votre email entraînera une déconnexion automatique.
+            </div>
+
+            <!-- Submit -->
+            <div class="form-actions">
+                <button type="submit" class="theme-btn btn-style fill">
+                    <span>Update Account</span>
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+</html>
+
+<script th:inline="javascript">
+    const originalEmail = "";
+    const emailInput = document.getElementById("email");
+    const warning = document.getElementById("emailWarning");
+
+    if (emailInput) {
+        emailInput.addEventListener("input", function () {
+            if (emailInput.value !== originalEmail) {
+                warning.style.display = "block";
+            } else {
+                warning.style.display = "none";
+            }
+        });
+    }
+</script>

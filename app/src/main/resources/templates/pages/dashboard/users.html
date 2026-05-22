@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/dashboard_layout :: dashboard_layout}">
+
+<div th:fragment="content_dashboard">
+
+    <h4>Users Management</h4>
+
+    <p class="form-subtitle">
+        Manage all registered users, their accounts and permissions.
+    </p>
+
+    <div th:if="${#lists.isEmpty(users)}">
+        <p>No users found.</p>
+    </div>
+
+    <table class="table table-striped" th:if="${!#lists.isEmpty(users)}">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Enabled</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="user, iterStat : ${users}">
+                <td th:text="${'#' + user.id}"></td>
+                <td th:text="${user.name}"></td>
+                <td th:text="${user.email}"></td>
+                <td>
+                    <span class="badge bg-success" th:if="${user.enabled}">Active</span>
+                    <span class="badge bg-danger" th:if="${!user.enabled}">Disabled</span>
+                </td>
+
+                <td class="px-4 gap-3">
+                    <!-- EDIT BUTTON -->
+                    <a href="#" title="Edit" style="margin-right:5px;" data-bs-toggle="modal" th:data-bs-target="'#editUserModal' + ${user.id}">
+                        <i class="fas fa-edit"></i>
+                    </a>
+
+                    <!-- EDIT MODAL (à placer dans le th:each de chaque utilisateur) -->
+                    <div class="modal fade" th:id="'editUserModal' + ${user.id}" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Edit User: <span th:text="${user.name}"></span></h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+
+                                <div class="modal-body">
+                                    <form th:action="@{/admin/users/update/{id}(id=${user.id})}" method="post" class="row g-3">
+
+                                        <div class="col-12">
+                                            <label class="form-label">Name</label>
+                                            <input type="text" name="name" th:value="${user.name}" class="form-control" required>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label class="form-label">Email</label>
+                                            <input type="email" name="email" th:value="${user.email}" class="form-control" required>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label class="form-label">Enabled</label>
+                                            <select name="enabled" class="form-select">
+                                                <option th:value="true" th:selected="${user.enabled}">Active</option>
+                                                <option th:value="false" th:selected="${!user.enabled}">Disabled</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-12 mt-3">
+                                            <button type="submit" class="theme-btn btn-style fill w-100">
+                                                <span>Update User</span>
+                                            </button>
+                                        </div>
+
+                                    </form>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- DELETE -->
+                    <a href="#" title="Delete" style="color:red;" data-bs-toggle="modal" th:data-bs-target="'#deleteModal' + ${user.id}">
+                        <i class="fas fa-trash"></i>
+                    </a>
+
+                    <!-- DELETE MODAL -->
+                    <div class="modal fade"
+                         th:id="'deleteModal' + ${user.id}"
+                         tabindex="-1">
+
+                        <div class="modal-dialog modal-dialog-centered">
+
+                            <div class="modal-content">
+
+                                <div class="modal-header">
+
+                                    <h5 class="modal-title">
+                                        Delete User
+                                    </h5>
+
+                                    <button type="button"
+                                            class="btn-close"
+                                            data-bs-dismiss="modal">
+                                    </button>
+
+                                </div>
+
+                                <div class="modal-body">
+
+                                    <p>
+                                        Do you really want to delete
+                                        <strong th:text="${user.name}"></strong> ?
+                                    </p>
+
+                                </div>
+
+                                <div class="modal-footer">
+
+                                    <button type="button"
+                                            class="theme-btn btn-style border"
+                                            data-bs-dismiss="modal">
+
+                                        <span>Cancel</span>
+
+                                    </button>
+
+                                    <form th:action="@{/admin/users/delete/{id}(id=${user.id})}"
+                                          method="post">
+
+                                        <button type="submit"
+                                                class="theme-btn btn-style fill">
+
+                                            <span>Delete</span>
+
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </td>
+
+            </tr>
+        </tbody>
+
+    </table>
+
+    <!-- PAGINATION -->
+    <nav class="simple-pagination"
+         th:if="${totalPages > 1}">
+
+        <a th:if="${currentPage > 0}"
+           th:href="@{/admin/users(page=${currentPage - 1})}">
+            ←
+        </a>
+
+        <a th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+           th:href="@{/admin/users(page=${i})}"
+           th:text="${i + 1}"
+           th:classappend="${i == currentPage} ? 'active' : ''">
+        </a>
+
+        <a th:if="${currentPage < totalPages - 1}"
+           th:href="@{/admin/users(page=${currentPage + 1})}">
+            →
+        </a>
+
+    </nav>
+
+</div>
+
+</html>
