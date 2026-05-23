@@ -170,22 +170,21 @@ L’objectif est d’automatiser le déploiement des artefacts vers Nexus en uti
 pipeline {
     agent any
 
+    tools {
+        maven 'M3'
+    }
+
     stages {
-        stage('Checkout') {
-            steps {
-                git 'http://localhost:3000/admin-gitea/Reservia.git'
-            }
-        }
 
         stage('Build') {
             steps {
-                sh 'mvn clean package'
+                sh 'mvn clean package -DskipTests'
             }
         }
 
-        stage('Deploy') {
+        stage('Deploy Nexus') {
             steps {
-                sh 'mvn deploy'
+                sh 'mvn deploy -DskipTests'
             }
         }
     }
