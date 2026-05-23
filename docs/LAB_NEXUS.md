@@ -135,17 +135,80 @@ Nous avons uploade le fichier demo-app.jar dans le repository maven-hosted en ut
 
 Le fichier 'demo-app.jar' a été stocké avec succes dans le repository 'maven-hosted'.
 
-# 10. Conclusion
+# 10. Intégration CI/CD avec Jenkins et Nexus
 
-Ce laboratoire nous a permis de :
+## 10.1 Objectif
 
-	- comprendre le rôle de Nexus
-	- comprendre les différents types de repositories
-	- installer Nexus avec Docker
-	- créer un repository Hosted
-	- publier un artéfact Java dans Nexus
+L’objectif est d’automatiser le déploiement des artefacts vers Nexus en utilisant Jenkins.
 
-# 11. Références
+---
+
+## 10.2 pom.xml
+
+```xml
+<distributionManagement>
+    <repository>
+        <id>nexus</id>
+        <url>http://localhost:8081/repository/maven-snapshots/</url>
+    </repository>
+</distributionManagement>
+```
+## 10.3 settings.xml
+```xml
+<settings>
+  <servers>
+    <server>
+      <id>nexus</id>
+      <username>admin</username>
+      <password>admin123</password>
+    </server>
+  </servers>
+</settings>
+```
+## 10.4 Jenkinsfile
+```xml
+pipeline {
+    agent any
+
+    tools {
+        maven 'M3'
+    }
+
+    stages {
+
+        stage('Build') {
+            steps {
+                sh 'mvn clean package -DskipTests'
+            }
+        }
+
+        stage('Deploy Nexus') {
+            steps {
+                sh 'mvn deploy -DskipTests'
+            }
+        }
+    }
+}
+```
+## 10.5 Résultat CI/CD
+- Build automatique avec Jenkins
+- Génération du JAR
+- Déploiement automatique vers Nexus
+## 11. Conclusion
+**Semaine 1**
+- Comprendre Nexus
+- Installer avec Docker
+- Créer un repository hosted
+- Uploader un artefact
+
+**Semaine 2**
+- Intégration Jenkins + Nexus
+- Automatisation Maven
+- Pipeline CI/CD complet
+
+---
+
+## 12. Références
 
 - https://help.sonatype.com/en/nexus-repository-manager.html
 - https://hub.docker.com/r/sonatype/nexus3
