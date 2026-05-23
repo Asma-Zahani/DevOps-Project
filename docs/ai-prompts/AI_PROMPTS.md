@@ -28,7 +28,7 @@ L'IA est autorisée pour :
 
 | Sujet | Lien |
 |-------|------|
-| Installation de Nexus, Artefacts , Repository | [Voir la conversation](https://chatgpt.com/share/6a082b66-c7ac-83ea-ad2b-cab94ce4e586) |
+| Installation de Nexus, Artefacts , Repository | [Voir la conversation](https://chatgpt.com/c/6a063617-6e28-83ea-b147-a45de23bfe33) |
 
 ---
 
