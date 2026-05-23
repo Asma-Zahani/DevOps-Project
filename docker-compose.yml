@@ -19,23 +19,9 @@ services:
     networks:
       - cicd-net
 
-  mysql:
-    image: mysql:8.0
-    container_name: mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: reserviadb
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql-data:/var/lib/mysql
-    networks:
-      - cicd-net
-
 volumes:
   sonarqube_data:
-  nexus-data:
-  mysql-data:
+  nexus_data:
 
 networks:
   cicd-net:

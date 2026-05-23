@@ -64,14 +64,22 @@ Signed-By: /etc/apt/keyrings/docker.asc
 EOF
 sudo apt update
 sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+```
+Ajouter utilisateur au groupe docker :
+```
 sudo usermod -aG docker $USER
 ```
+Reconnecter ensuite la session.
 
 ## 7. Installation Java 17
 
 ```bash
 sudo apt update
 sudo apt install -y openjdk-17-jdk
+```
+Vérification :
+```
+java -version
 ```
 
 ## 8. Installation Maven
@@ -80,21 +88,39 @@ sudo apt install -y openjdk-17-jdk
 sudo apt update
 sudo apt install -y maven
 ```
-
-## 9. Lancement plateforme
-
-Ordre obligatoire :
-
-1. Lancer la plateforme core (Jenkins, SonarQube, Nexus, MySQL) :
-
-```bash
-docker compose up -d
+Vérification :
+```
+mvn -version
 ```
 
-2. Installer Harbor séparément (voir `docs/INSTALL_HARBOR.md`).
-3. Configurer Jenkins (plugins, credentials, SonarQube server, M3 tool).
+## 9. Lancement plateforme CI/CD
 
-## 10. Tableau des accès
+Démarrer les services principaux :
+```
+docker compose up -d
+```
+Services lancés :
+
+- Jenkins
+- SonarQube
+- Nexus
+
+## 10. Installation Harbor
+
+Installer Harbor séparément :
+```
+docs/LAB_HARBOR.md
+```
+Après chaque modification du fichier harbor.yml :
+
+```
+cd harbor
+sudo ./prepare
+sudo docker compose down
+sudo docker compose up -d
+```
+
+## 11. Tableau des accès
 
 | Service   | URL             |
 | --------- | --------------- |
@@ -103,40 +129,58 @@ docker compose up -d
 | Nexus     | http://@IP:8081 |
 | Harbor    | http://@IP:8082 |
 
-## 11. Nexus password initial
+## 12. Nexus password initial
 
 ```bash
 docker exec nexus cat /nexus-data/admin.password
 ```
 
+
 ## 12. Configuration Jenkins
 
-Plugins recommandés :
-- SonarQube Scanner
-- Docker Pipeline
+### Plugins recommandés :
 - Pipeline
+- Docker Pipeline
+- SonarQube Scanner
+- Maven Integration
 
-Credentials à créer :
-- `sonar-token` (token Sonar)
-- `nexus-credentials` (user/password Nexus)
-- `harbor-credentials` (user/password Harbor)
+### Credentials Jenkins
 
-SonarQube Server dans Jenkins :
-- Nom: `SonarQube`
-- URL: `http://@IP:9000`
+Créer :
+| ID                     | Type              |
+| ---------------------- | ----------------- |
+| sonar-token            | Secret text       |
+| nexus-credentials      | Username/password |
+| harbor-credentials     | Username/password |
 
-Maven (Tools) :
-- Nom: `M3`
+### SonarQube Server dans Jenkins :
+```
+Manage Jenkins → System → SonarQube servers
+```
+Ajouter :
+| Champ    | Valeur            |
+| -------- | ----------------- |
+| Nom      | `SonarQube`       |
+| URL      | `http://@IP:9000` |
 
-## 13. settings.xml Maven
+### Maven Tool
+```
+Manage Jenkins → Tools
+```
+Ajouter :
+| Champ    | Valeur            |
+| -------- | ----------------- |
+| Nom      | `M3`              |
 
-Créer `~/.m2/settings.xml` avec :
+## 14. Configuration de `settings.xml` pour Maven
+
+Créez un fichier `settings.xml` avec le contenu suivant :
 
 ```xml
 <settings>
   <servers>
     <server>
-      <id>nexus-snapshots</id>
+      <id>nexus</id>
       <username>admin</username>
       <password>password</password>
     </server>
@@ -144,22 +188,42 @@ Créer `~/.m2/settings.xml` avec :
 </settings>
 ```
 
-## 14. Permissions Docker Jenkins
+- Pour un utilisateur local placez le fichier dans :
+```
+~/.m2/settings.xml
+```
+- Pour Jenkins placez le fichier dans :
+```
+/var/lib/jenkins/.m2/settings.xml
+```
+et assurez-vous que Jenkins en est propriétaire :
+```
+sudo chown -R jenkins:jenkins /var/lib/jenkins/.m2
+```
+
+## 15. Permissions Docker Jenkins
 
 ```bash
 sudo usermod -aG docker jenkins
 ```
-
-## 15. Build manuel Docker
-
-```bash
-docker build -t reservia-app:v1 app
+Puis :
+```
+sudo systemctl restart jenkins
 ```
 
-## 16. Push Harbor manuel
+## 16. Configuration Docker insecure registry (Harbor HTTP)
 
-```bash
-docker login @IP:8082
-docker tag reservia-app:v1 @IP:8082/reservia/reservia-app:v1
-docker push @IP:8082/reservia/reservia-app:v1
+Créer/modifier :
+```
+sudo nano /etc/docker/daemon.json
+```
+Ajouter :
+```
+{
+  "insecure-registries": ["@IP:8082"]
+}
+```
+Puis :
+```
+sudo systemctl restart docker
 ```

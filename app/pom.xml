@@ -193,10 +193,10 @@
 
     <!-- Distribution management: push snapshots to Nexus in CI (nexus service on docker-compose) -->
     <distributionManagement>
-        <snapshotRepository>
-            <id>nexus-snapshots</id>
-            <url>http://@IP:8081/repository/maven-snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
+    	<repository>
+        	<id>nexus</id>
+        	<url>http://@IP:8081/repository/maven-snapshots/</url>
+    	</repository>
+	</distributionManagement>
 
 </project>
