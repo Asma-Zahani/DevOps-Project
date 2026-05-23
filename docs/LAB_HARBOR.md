@@ -314,3 +314,111 @@ images/harbor/
 
 - Harbor Documentation : https://goharbor.io/docs/
 - Docker Documentation : https://docs.docker.com/
+
+---
+
+# 8. Intégration CI/CD avec Jenkins + Docker + Harbor
+
+## Objectif
+
+Automatiser grâce à Jenkins Pipeline :
+
+- le build du projet
+- la création de l'image Docker
+- le push automatique vers Harbor
+
+---
+
+## 8.1 Architecture CI/CD finale
+
+```text
+Développeur
+    │
+    ▼
+git push
+    │
+    ▼
+Gitea
+    │ webhook
+    ▼
+Jenkins Pipeline
+    │
+    ├── Maven Build
+    ├── SonarQube Analysis
+    ├── Nexus Deploy
+    ├── Docker Build
+    └── Push Harbor
+```
+
+---
+
+## 8.2 Dockerfile du Projet Spring Boot
+
+Le projet Spring Boot génère un fichier `.war`.
+Tomcat est utilisé pour exécuter ce fichier.
+
+### Dockerfile utilisé
+
+```dockerfile
+FROM tomcat:10.1
+COPY target/*.war /usr/local/tomcat/webapps/ROOT.war
+EXPOSE 8080
+```
+
+### Explication
+
+| Instruction | Rôle |
+|---|---|
+| `FROM tomcat:10.1` | Utilisation de l'image officielle Tomcat, un serveur Java permettant d'exécuter les applications `.war` |
+| `COPY target/*.war` | Copie le fichier `.war` généré par Maven dans le dossier `webapps` de Tomcat |
+| `ROOT.war` | Permet d'accéder directement à l'application depuis `http://ip-machine:8080` sans écrire le nom du projet |
+| `EXPOSE 8080` | Ouvre le port 8080 du conteneur |
+
+---
+
+## 8.3 Jenkins Pipeline
+
+Le pipeline Jenkins automatise toutes les étapes DevOps.
+
+### Jenkinsfile utilisé
+
+```groovy
+pipeline {
+   
+        stage('Docker Build') {
+            steps {
+                sh 'docker build -t reservia-app:v1 .'
+            }
+        }
+        stage('Push Harbor') {
+            steps {
+                sh 'docker tag reservia-app:v1 10.0.2.15:8088/dev-project/reservia-app:v1'
+                sh 'docker push 10.0.2.15:8088/dev-project/reservia-app:v1'
+            }
+        }
+    
+```
+
+---
+
+## 8.4 Explication des stages Jenkins
+
+| Stage | Rôle |
+|---|---|
+| `Docker Build` | Crée l'image Docker à partir du Dockerfile |
+| `Push Harbor` | Tag et push l'image Docker vers le registre Harbor |
+
+---
+
+## 8.5 Login Harbor depuis Jenkins
+
+Avant le push Harbor, Jenkins doit être authentifié auprès du registre.
+
+Se connecter avec l'utilisateur Jenkins :
+
+```bash
+sudo su - jenkins
+docker login 10.0.2.15:8088
+```
+
+
