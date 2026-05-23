@@ -135,11 +135,10 @@ nano harbor.yml
 configuration utilisée :
 
 ```yaml
-hostname: 10.0.2.15 (ip machine)
+hostname: @IP
 
 http:
-  port: 8088 (car quand j'ai essayer d'utiliser le port 80 il est utilisé par
-              jenkins donc j'ai modifié le port)
+  port: 8088
 ```
 ![configuration 1](images/harbor/config-Harbor1.png)
 ![Extract harbor1](images/harbor/config-Harbor2.png)
@@ -170,7 +169,7 @@ car Docker refuse de communiquer avec un registre non sécurisé.
 dans `/etc/docker/daemon.json` :
 
 ```json
-{ "insecure-registries" : ["10.0.2.15:8088"]}
+{ "insecure-registries" : ["@IP:8088"]}
 ```
 ![Insecure registry](images/harbor/insecure-registry.png)
 
@@ -180,7 +179,7 @@ apres l'instalation de nouveau se reussi
 j'ai acceder a l'interface web avec:
 
 ```text
-http://10.0.2.15:8088
+http://@IP:8088
 ```
 
 ### Interface Harbor
@@ -248,7 +247,7 @@ docker build -t myapp:v1 .
 ## 5.4 Login Harbor
 
 ```bash
-docker login 10.0.2.15:8088
+docker login @IP:8088
 ```
 
 ---
@@ -256,7 +255,7 @@ docker login 10.0.2.15:8088
 ## 5.5 Tag de l’image
 
 ```bash
-docker tag myapp:v1 10.0.2.15:8088/dev-project/myapp:v1
+docker tag myapp:v1 @IP:8088/dev-project/myapp:v1
 ```
 ![Login + tag](images/harbor/login-tag-image.png)
 ---
@@ -264,7 +263,7 @@ docker tag myapp:v1 10.0.2.15:8088/dev-project/myapp:v1
 ## 5.6 Push de l’image vers Harbor
 
 ```bash
-docker push 10.0.2.15:8088/dev-project/myapp:v1
+docker push @IP:8088/dev-project/myapp:v1
 ```
 
 Après le push, l’image apparaît dans :
@@ -292,7 +291,7 @@ docker rmi myapp:v1
 ## 5.8 Pull de l’image
 
 ```bash
-docker pull 10.0.2.15:8088/dev-project/myapp:v1
+docker pull @IP:8088/dev-project/myapp:v1
 ```
 
 ### Pull image depuis Harbor
@@ -387,13 +386,13 @@ pipeline {
    
         stage('Docker Build') {
             steps {
-                sh 'docker build -t reservia-app:v1 .'
+                sh 'docker build -t reservia-app:v1 app'
             }
         }
         stage('Push Harbor') {
             steps {
-                sh 'docker tag reservia-app:v1 10.0.2.15:8088/dev-project/reservia-app:v1'
-                sh 'docker push 10.0.2.15:8088/dev-project/reservia-app:v1'
+                sh 'docker tag reservia-app:v1 @IP:8088/dev-project/reservia-app:v1'
+                sh 'docker push @IP:8088/dev-project/reservia-app:v1'
             }
         }
     
@@ -418,7 +417,7 @@ Se connecter avec l'utilisateur Jenkins :
 
 ```bash
 sudo su - jenkins
-docker login 10.0.2.15:8088
+docker login @IP:8088
 ```
 
 
