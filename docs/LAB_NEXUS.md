@@ -149,7 +149,7 @@ L’objectif est d’automatiser le déploiement des artefacts vers Nexus en uti
 <distributionManagement>
     <repository>
         <id>nexus</id>
-        <url>http://localhost:8081/repository/maven-hosted/</url>
+        <url>http://localhost:8081/repository/maven-snapshots/</url>
     </repository>
 </distributionManagement>
 ```
