@@ -8,7 +8,7 @@
 
 ## Objectif du lab
 
-Le but de ce labo est de découvrir comment SonarQube peut nous aider à détecter automatiquement les bugs, les vulnérabilités et les “code smells” dans une application Java utilisant Maven.
+Le but de ce laboratoire est de découvrir comment SonarQube permet de détecter automatiquement les bugs, les vulnérabilités et les “code smells” dans une application Java utilisant Maven.
 
 Nous allons créer un petit projet de test avec des erreurs intentionnelles pour voir comment SonarQube les détecte et les remonte.
 
@@ -150,7 +150,7 @@ docker ps
 Le serveur SonarQube peut prendre environ 1 minute pour démarrer complètement. Ensuite, accédez à :
 
 ```
-http://localhost:9000
+http://@IP:9000
 ```
 
 - **Login par défaut** : `admin / admin`
@@ -268,7 +268,7 @@ Pour analyser le projet et envoyer les résultats à SonarQube, nous exécutons 
 ```bash
 mvn clean verify sonar:sonar \
   -Dsonar.projectKey=my-app \
-  -Dsonar.host.url=http://localhost:9000 \
+  -Dsonar.host.url=http://@IP:9000 \
   -Dsonar.login=MON_TOKEN_ICI
 ```
 
@@ -311,7 +311,7 @@ Après l’analyse, SonarQube remonte différents problèmes détectés dans not
 
 Pour explorer les résultats :
 
-1. Aller sur `http://localhost:9000`
+1. Aller sur `http://@IP:9000`
 2. Cliquer sur **Projects → my-app**
 3. Observer :
     - Statut du **Quality Gate**
@@ -321,3 +321,130 @@ Pour explorer les résultats :
 > Le dashboard permet de naviguer directement vers les lignes problématiques et de comprendre exactement ce qui doit être corrigé.
 
 ---
+
+## 6. Intégration CI/CD avec Jenkins et SonarQube
+
+Dans une chaîne CI/CD, SonarQube peut être intégré avec Jenkins afin d’automatiser l’analyse de qualité du code à chaque build.
+
+Cette intégration permet de :
+
+- lancer automatiquement l’analyse statique ;
+- vérifier le Quality Gate ;
+- bloquer le pipeline si la qualité du code est insuffisante.
+
+### 6.1 Plugins Jenkins nécessaires
+
+Les plugins Jenkins suivants doivent être installés :
+
+- SonarQube Scanner for Jenkins
+- Pipeline
+- Credentials Plugin
+
+### 6.2 Configuration SonarQube dans Jenkins
+
+Dans Jenkins :
+
+1. Aller dans **Manage Jenkins → Configure System**
+2. Chercher la section **SonarQube Servers**
+3. Ajouter un serveur SonarQube :
+
+| Champ | Valeur |
+|---|---|
+| Name | `SonarQube` |
+| Server URL | `http://sonarqube:9000` |
+
+### 6.3 Stages Jenkinsfile
+
+Dans le pipeline Jenkins, nous ajoutons les stages suivants :
+
+```groovy
+stage('SonarQube Analysis') {
+  steps {
+    dir('app') {
+      withSonarQubeEnv('SonarQube') {
+        sh 'mvn sonar:sonar -Dsonar.projectKey=CI-CD-Project'
+      }
+    }
+  }
+}
+
+stage('Quality Gate') {
+  steps {
+    waitForQualityGate abortPipeline: true
+  }
+}
+```
+
+### 6.4 Explication des stages
+
+| Stage | Description |
+|---|---|
+| `SonarQube Analysis` | Lance l’analyse statique avec Maven |
+| `withSonarQubeEnv` | Injecte automatiquement la configuration SonarQube |
+| `waitForQualityGate` | Attend le résultat du Quality Gate |
+| `abortPipeline: true` | Stoppe le pipeline si le Quality Gate échoue |
+
+### 6.5 Fonctionnement du pipeline
+
+```text
+Developer Push
+       │
+       ▼
+     Jenkins
+       │
+       ▼
+ Maven Build
+       │
+       ▼
+ SonarQube Analysis
+       │
+       ▼
+ Quality Gate
+   │         │
+ PASS      FAIL
+   │         │
+   ▼         ▼
+ Deploy    Pipeline Stopped
+```
+
+Cette intégration permet d’assurer automatiquement la qualité du code avant le déploiement de l’application.
+
+---
+
+## 7. Troubleshooting
+
+### 7.1 Timeout : Socket closed
+
+Si l'analyse échoue avec une erreur `Socket closed`, vérifiez :
+
+- la connectivité entre Jenkins et le serveur SonarQube ;
+- l'URL de SonarQube :
+  - `http://sonarqube:9000` pour Docker interne ;
+  - `http://@IP:9000` depuis l'extérieur ;
+- le temps d'attente du stage `waitForQualityGate`.
+
+### 7.2 Mémoire insuffisante
+
+Vérifiez l'utilisation mémoire du conteneur SonarQube :
+
+```bash
+docker stats sonarqube
+```
+
+Si la mémoire est insuffisante, augmentez la mémoire disponible pour Docker ou Java.
+
+### 7.3 vm.max_map_count
+
+Pour corriger les problèmes liés à `vm.max_map_count`, exécutez :
+
+```bash
+sudo sysctl -w vm.max_map_count=262144
+```
+
+### 7.4 Contrôles système
+
+```bash
+df -h
+docker stats
+docker logs -f sonarqube
+```

@@ -149,7 +149,7 @@ L’objectif est d’automatiser le déploiement des artefacts vers Nexus en uti
 <distributionManagement>
     <repository>
         <id>nexus</id>
-        <url>http://localhost:8081/repository/maven-snapshots/</url>
+        <url>http://@IP:8081/repository/maven-snapshots/</url>
     </repository>
 </distributionManagement>
 ```
@@ -178,13 +178,17 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'mvn clean package -DskipTests'
+                dir('app') {
+                    sh 'mvn clean package -DskipTests'
+                }
             }
         }
 
         stage('Deploy Nexus') {
             steps {
-                sh 'mvn deploy -DskipTests'
+                dir('app') {
+                    sh 'mvn deploy -DskipTests'
+                }
             }
         }
     }

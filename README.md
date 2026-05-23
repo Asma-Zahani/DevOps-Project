@@ -7,7 +7,7 @@ Projet CI/CD pédagogique pour démonstration universitaire.
 Architecture proposée:
 
 ```
-Gitea ↓ Jenkins ↓ Maven ↓ SonarQube ↓ Nexus ↓ Docker ↓ Harbor
+Gitea → Jenkins → Maven → SonarQube → Nexus → Docker → Harbor
 ```
 
 Ce repository contient :
@@ -151,7 +151,6 @@ Créer :
 | ---------------------- | ----------------- |
 | sonar-token            | Secret text       |
 | nexus-credentials      | Username/password |
-| harbor-credentials     | Username/password |
 
 ### SonarQube Server dans Jenkins :
 ```

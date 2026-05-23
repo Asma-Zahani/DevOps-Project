@@ -195,7 +195,7 @@
     <distributionManagement>
     	<repository>
         	<id>nexus</id>
-        	<url>http://@IP:8081/repository/maven-snapshots/</url>
+        	<url>http://192.168.56.6:8081/repository/maven-snapshots/</url>
     	</repository>
 	</distributionManagement>
 
